@@ -20,6 +20,44 @@
             overflow-x: hidden;
             position: relative;
         }
+                .stats-section {
+            text-align: center;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #88ccff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-container {
+                gap: 40px;
+            }
+            .stat-number {
+                font-size: 36px;
+            }
+        }
                 /* Share Button */
         .share-btn {
             display: inline-flex;
@@ -634,14 +672,28 @@
             <p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>
         </div>
     </div>
-
+    <!-- Stats Section -->
+    <div class="glass-card stats-section">
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number" id="downloadCount">0</div>
+                <div class="stat-label"><i class="fas fa-download"></i> Downloads</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="reviewCount">0</div>
+                <div class="stat-label"><i class="fas fa-star"></i> Reviews</div>
+            </div>
+        </div>
+    </div>
     <footer>
         <p>Origin Empire — Building software that big tech doesn't want you to have</p>
         <p style="margin-top: 10px;">Contact: originofficialapp@gmail.com</p>
+   
     </footer>
 </div>
 
 <script>
+       // Load reviews and update counter
     function loadReviews() {
         let reviews = localStorage.getItem('origincalc_reviews');
         if (!reviews) {
@@ -650,7 +702,15 @@
             reviews = JSON.parse(reviews);
         }
         
+        // Update review counter
+        const reviewCountSpan = document.getElementById('reviewCount');
+        if (reviewCountSpan) {
+            reviewCountSpan.textContent = reviews.length;
+        }
+        
         const container = document.getElementById('reviewsList');
+        if (!container) return;
+        
         if (reviews.length === 0) {
             container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>';
             return;
@@ -664,6 +724,51 @@
             </div>
         `).join('');
     }
+    
+    // Load download count from localStorage
+    function loadDownloadCount() {
+        let downloads = localStorage.getItem('origincalc_downloads');
+        if (!downloads) {
+            downloads = 0;
+        } else {
+            downloads = parseInt(downloads);
+        }
+        
+        const downloadCountSpan = document.getElementById('downloadCount');
+        if (downloadCountSpan) {
+            downloadCountSpan.textContent = downloads;
+        }
+    }
+    
+    // Increment download count
+    function incrementDownloadCount() {
+        let downloads = localStorage.getItem('origincalc_downloads');
+        downloads = downloads ? parseInt(downloads) : 0;
+        downloads++;
+        localStorage.setItem('origincalc_downloads', downloads);
+        
+        const downloadCountSpan = document.getElementById('downloadCount');
+        if (downloadCountSpan) {
+            downloadCountSpan.textContent = downloads;
+        }
+    }
+    
+    // Attach download tracking
+    function setupDownloadTracking() {
+        const downloadBtn = document.querySelector('.download-btn');
+        if (downloadBtn) {
+            downloadBtn.addEventListener('click', function() {
+                incrementDownloadCount();
+            });
+        }
+    }
+    
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', function() {
+        loadReviews();
+        loadDownloadCount();
+        setupDownloadTracking();
+    });
     
     function submitReview() {
         const name = document.getElementById('reviewName').value.trim();
