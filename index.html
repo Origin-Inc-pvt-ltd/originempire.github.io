@@ -656,7 +656,7 @@
         
         <p style="margin-top: 15px; font-size: 14px; color: rgba(255,255,255,0.5);">© 2026 Origin Empire • All Rights Reserved • Proprietary Software</p>
     </div>
-    <!-- Reviews Section -->
+      <!-- Reviews Section - Google Sheets (Global) -->
     <div class="glass-card">
         <h3><i class="fas fa-star"></i> User Reviews</h3>
         
@@ -669,7 +669,7 @@
         </div>
 
         <div id="reviewsList">
-            <p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>
+            <p style="color: rgba(255,255,255,0.5); text-align: center;">Loading reviews...</p>
         </div>
     </div>
     <!-- Stats Section -->
@@ -694,83 +694,46 @@
 
 <script>
        // Load reviews and update counter
-    function loadReviews() {
-        let reviews = localStorage.getItem('origincalc_reviews');
-        if (!reviews) {
-            reviews = [];
-        } else {
-            reviews = JSON.parse(reviews);
-        }
-        
-        // Update review counter
-        const reviewCountSpan = document.getElementById('reviewCount');
-        if (reviewCountSpan) {
-            reviewCountSpan.textContent = reviews.length;
-        }
-        
+      // ========== GOOGLE SHEETS REVIEWS (GLOBAL) ==========
+    // IMPORTANT: Replace this URL with your Google Apps Script Web App URL
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnq1gq33gDecYgeElBrhn9UYbp6xNCgUspgRfEivn_kZLdgNDOxpXvO-y5F9yiO12B6Q/exec';
+    
+    // Load reviews from Google Sheet
+    async function loadReviews() {
         const container = document.getElementById('reviewsList');
         if (!container) return;
         
-        if (reviews.length === 0) {
-            container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>';
-            return;
-        }
+        container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">Loading reviews...</p>';
         
-        container.innerHTML = reviews.map(r => `
-            <div class="review-item">
-                <div style="font-weight: bold; color: #88ccff;">${escapeHtml(r.name)}</div>
-                <div style="margin: 8px 0;">${escapeHtml(r.text)}</div>
-                <small style="color: rgba(255,255,255,0.4);">${r.date}</small>
-            </div>
-        `).join('');
-    }
-    
-    // Load download count from localStorage
-    function loadDownloadCount() {
-        let downloads = localStorage.getItem('origincalc_downloads');
-        if (!downloads) {
-            downloads = 0;
-        } else {
-            downloads = parseInt(downloads);
-        }
-        
-        const downloadCountSpan = document.getElementById('downloadCount');
-        if (downloadCountSpan) {
-            downloadCountSpan.textContent = downloads;
-        }
-    }
-    
-    // Increment download count
-    function incrementDownloadCount() {
-        let downloads = localStorage.getItem('origincalc_downloads');
-        downloads = downloads ? parseInt(downloads) : 0;
-        downloads++;
-        localStorage.setItem('origincalc_downloads', downloads);
-        
-        const downloadCountSpan = document.getElementById('downloadCount');
-        if (downloadCountSpan) {
-            downloadCountSpan.textContent = downloads;
+        try {
+            const response = await fetch(SCRIPT_URL);
+            const reviews = await response.json();
+            
+            const reviewCountSpan = document.getElementById('reviewCount');
+            if (reviewCountSpan) {
+                reviewCountSpan.textContent = reviews.length;
+            }
+            
+            if (reviews.length === 0) {
+                container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>';
+                return;
+            }
+            
+            container.innerHTML = reviews.reverse().map(r => `
+                <div class="review-item">
+                    <div style="font-weight: bold; color: #88ccff;">${escapeHtml(r.name)}</div>
+                    <div style="margin: 8px 0;">${escapeHtml(r.review)}</div>
+                    <small style="color: rgba(255,255,255,0.4);">${new Date(r.date).toLocaleDateString()}</small>
+                </div>
+            `).join('');
+        } catch (error) {
+            console.error('Failed to load reviews:', error);
+            container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">Failed to load reviews. Please try again later.</p>';
         }
     }
     
-    // Attach download tracking
-    function setupDownloadTracking() {
-        const downloadBtn = document.querySelector('.download-btn');
-        if (downloadBtn) {
-            downloadBtn.addEventListener('click', function() {
-                incrementDownloadCount();
-            });
-        }
-    }
-    
-    // Initialize everything
-    document.addEventListener('DOMContentLoaded', function() {
-        loadReviews();
-        loadDownloadCount();
-        setupDownloadTracking();
-    });
-    
-    function submitReview() {
+    // Submit review to Google Sheet
+    async function submitReview() {
         const name = document.getElementById('reviewName').value.trim();
         const text = document.getElementById('reviewText').value.trim();
         
@@ -779,30 +742,37 @@
             return;
         }
         
-        let reviews = localStorage.getItem('origincalc_reviews');
-        reviews = reviews ? JSON.parse(reviews) : [];
+        const submitBtn = document.querySelector('.submit-btn');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
         
-        reviews.unshift({
-            name: name,
-            text: text,
-            date: new Date().toLocaleDateString()
-        });
-        
-        localStorage.setItem('origincalc_reviews', JSON.stringify(reviews));
-        
-        document.getElementById('reviewName').value = '';
-        document.getElementById('reviewText').value = '';
-        
-        loadReviews();
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: name, review: text })
+            });
+            
+            document.getElementById('reviewName').value = '';
+            document.getElementById('reviewText').value = '';
+            
+            setTimeout(() => {
+                loadReviews();
+            }, 1000);
+            
+            alert('Thank you for your review!');
+        } catch (error) {
+            console.error('Failed to submit review:', error);
+            alert('Failed to submit review. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
     }
-    
-    function escapeHtml(text) {
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-    
-    loadReviews();
         function shareApp() {
         const url = window.location.href;
         
@@ -889,12 +859,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 */
 // And change it to:
-document.addEventListener('DOMContentLoaded', function() {
-    loadReviews();
-    loadDownloadCount();
-    setupDownloadTracking();
-    fetchRealDownloadCount(); // <-- ADD THIS LINE
-});
+    document.addEventListener('DOMContentLoaded', function() {
+        loadReviews();
+        loadDownloadCount();
+        setupDownloadTracking();
+        fetchRealDownloadCount();
+    });
 </script>
 
 </body>
