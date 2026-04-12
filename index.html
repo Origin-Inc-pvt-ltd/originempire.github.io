@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Origin Empire - OriginCalc</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0a0f2a 0%, #0a1a3a 25%, #0a2a4a 50%, #0a1a3a 75%, #0a0f2a 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+                /* Share Button */
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 18px 48px;
+            border-radius: 60px;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #44aaff;
+        }
+
+        @media (max-width: 768px) {
+            .download-btn, .share-btn {
+                padding: 14px 32px;
+                font-size: 16px;
+            }
+        }
+        /* Feature Categories */
+        .feature-category {
+            margin-bottom: 35px;
+        }
+        
+        .feature-category h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #88ccff;
+        }
+        
+        .feature-category h3 i {
+            margin-right: 10px;
+        }
+        
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        
+        .tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .tag:hover {
+            background: rgba(0, 100, 255, 0.3);
+            border-color: #44aaff;
+            transform: translateY(-2px);
+        }
+        
+        .currency {
+            background: rgba(0, 150, 255, 0.15);
+            border-color: #44aaff;
+        }
+        
+        .smart {
+            background: rgba(68, 170, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .tag {
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+        }
+        /* Animated Background Waves */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(0,100,255,0.15)" d="M0,192L48,197.3C96,203,192,213,288,208C384,203,480,181,576,186.7C672,192,768,224,864,229.3C960,235,1056,213,1152,192C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg>') repeat-x;
+            background-size: cover;
+            opacity: 0.4;
+            animation: wave 20s linear infinite;
+        }
+
+        .wave:nth-child(2) {
+            bottom: 0;
+            opacity: 0.2;
+            animation: wave 15s linear infinite reverse;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="rgba(0,150,255,0.2)" d="M0,256L48,234.7C96,213,192,171,288,160C384,149,480,171,576,186.7C672,203,768,213,864,197.3C960,181,1056,139,1152,128C1248,117,1344,139,1392,149.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"/></svg>') repeat-x;
+            background-size: cover;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Animated Gradient Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 25s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: #0044ff;
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: #00aaff;
+            bottom: -300px;
+            right: -200px;
+            animation-delay: 5s;
+        }
+
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: #0066ff;
+            top: 50%;
+            left: 50%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Main Content */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Glass Card (reusable) */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 45px rgba(0, 100, 255, 0.2);
+            border-color: rgba(0, 150, 255, 0.3);
+        }
+
+        /* ========== COMPANY SECTION ========== */
+        .company-section {
+            text-align: center;
+        }
+
+        .company-logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #0044ff, #00aaff);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            box-shadow: 0 20px 40px rgba(0, 68, 255, 0.3);
+        }
+
+        .company-logo img {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+        }
+
+        .company-name {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff, #88ccff, #00aaff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .company-tagline {
+            font-size: 18px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 30px;
+        }
+
+        .company-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            background: rgba(0, 100, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .badge i {
+            margin-right: 8px;
+            color: #44aaff;
+        }
+
+        .company-story {
+            max-width: 700px;
+            margin: 0 auto;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.8;
+        }
+
+        .company-story p {
+            margin: 15px 0;
+        }
+
+        .company-divider {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #0044ff, #00aaff);
+            margin: 30px auto;
+            border-radius: 3px;
+        }
+
+        /* ========== PRODUCT SECTION ========== */
+        .product-icon {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .app-icon {
+            width: 120px;
+            height: 120px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #0044ff, #00aaff);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 20px 40px rgba(0, 68, 255, 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .feature-item {
+            background: rgba(255,255,255,0.03);
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .feature-item i {
+            font-size: 40px;
+            color: #44aaff;
+            margin-bottom: 15px;
+        }
+
+        .security-badge {
+            background: rgba(0, 100, 255, 0.2);
+            border-radius: 50px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+        }
+
+        /* Download Button */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, #0066ff, #00aaff);
+            padding: 18px 48px;
+            border-radius: 60px;
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0, 102, 255, 0.5);
+            background: linear-gradient(135deg, #2277ff, #33bbff);
+        }
+
+        /* Dark Reality Section */
+        .dark-story {
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,50,100,0.3));
+            border-left: 4px solid #ff4444;
+        }
+
+        /* Reviews */
+        .review-box {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: white;
+            font-size: 16px;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #44aaff;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #0066ff, #00aaff);
+            padding: 12px 30px;
+            border: none;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .review-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 25px;
+            }
+            .company-name {
+                font-size: 32px;
+            }
+            .container {
+                padding: 15px;
+            }
+            .download-btn {
+                padding: 14px 32px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Animated Background -->
+<div class="bg-animation">
+    <div class="wave"></div>
+    <div class="wave"></div>
+</div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="container">
+    <!-- ========== COMPANY SECTION (TOP HERO AREA) ========== -->
+    <div class="glass-card company-section">
+        <div class="company-logo">
+            <img src="assets/logo.png" alt="Origin Empire" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-crown\' style=\'font-size:50px; color:white;\'></i>'">
+        </div>
+        <h1 class="company-name">ORIGIN EMPIRE</h1>
+        <p class="company-tagline">Next Generation Technology • Independent Software Development</p>
+        
+        <div class="company-badges">
+            <span class="badge"><i class="fas fa-fist-raised"></i> 100% Independent</span>
+            <span class="badge"><i class="fas fa-user"></i> Solo Founded</span>
+            <span class="badge"><i class="fas fa-calendar-alt"></i> Founded 2025</span>
+        </div>
+
+        <div class="company-divider"></div>
+
+        <div class="company-story">
+            <p>Origin Empire was founded in 2025 by Rishi, a solo developer with a vision: build innovative software without compromise.</p>
+            <p>No investors. No board meetings. No corporate bullshit. Just raw, independent development focused on quality and user privacy.</p>
+            <p><strong style="color: #88ccff;">One developer. One vision. One empire.</strong></p>
+        </div>
+    </div>
+
+       <!-- ========== PRODUCT SECTION (OriginCalc) ========== -->
+    <div class="glass-card">
+        <div class="product-icon">
+            <div class="app-icon">
+                <i class="fas fa-calculator"></i>
+            </div>
+        </div>
+        <h2 style="text-align: center; margin-bottom: 10px;">OriginCalc</h2>
+        <p style="text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 30px;">Advanced Calculator with Proprietary Technology</p>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <i class="fas fa-chart-line"></i>
+                <h3>Proprietary Algorithms</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">Unique calculation methods</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-bolt"></i>
+                <h3>Lightning Fast</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">Optimized performance</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-lock"></i>
+                <h3>100% Private</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">No data collection</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-database"></i>
+                <h3>Works Offline</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">No internet needed</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-gem"></i>
+                <h3>Fully Free</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">No payments. No hidden fees. Forever.</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-trophy"></i>
+                <h3>Best Calculator on Android</h3>
+                <p style="font-size: 14px; color: rgba(255,255,255,0.6);">Unmatched performance and innovation</p>
+            </div>
+        </div>
+
+        <div class="security-badge">
+            <i class="fas fa-shield-alt"></i> Security: Obfuscated • Watermarked • Tamper Detection
+        </div>
+    </div>
+       <!-- Download & Share Buttons -->
+    <div style="text-align: center; margin: 40px 0;">
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <a href="OriginCalc.apk" class="download-btn" download>
+                <i class="fas fa-download"></i> Download OriginCalc APK
+            </a>
+            <button class="share-btn" onclick="shareApp()">
+                <i class="fas fa-share-alt"></i> Share OriginCalc
+            </button>
+        </div>
+        <p style="color: rgba(255,255,255,0.5); margin-top: 15px;">Android APK • Version 1.0 • Direct Install</p>
+    </div>
+    <!-- Features Section - What OriginCalc Actually Does -->
+    <div class="glass-card">
+        <h2 style="text-align: center; margin-bottom: 10px;"><i class="fas fa-cogs"></i> What OriginCalc Can Do</h2>
+        <p style="text-align: center; color: rgba(255,255,255,0.6); margin-bottom: 30px;">Not just a calculator. A complete toolkit.</p>
+
+        <!-- Calculator Types -->
+        <div class="feature-category">
+            <h3><i class="fas fa-calculator"></i> 5 Calculators in One</h3>
+            <div class="feature-tags">
+                <span class="tag">Standard</span>
+                <span class="tag">Scientific</span>
+                <span class="tag">Graphing</span>
+                <span class="tag">Programmer</span>
+                <span class="tag">Date Calculation</span>
+            </div>
+        </div>
+
+        <!-- Converters -->
+        <div class="feature-category">
+            <h3><i class="fas fa-exchange-alt"></i> 12 Converters</h3>
+            <div class="feature-tags">
+                <span class="tag">Volume</span>
+                <span class="tag">Length</span>
+                <span class="tag">Weight & Mass</span>
+                <span class="tag">Temperature</span>
+                <span class="tag">Energy</span>
+                <span class="tag">Area</span>
+                <span class="tag">Speed</span>
+                <span class="tag">Time</span>
+                <span class="tag">Power</span>
+                <span class="tag">Data</span>
+                <span class="tag">Pressure</span>
+                <span class="tag">Angle</span>
+            </div>
+        </div>
+
+        <!-- Currency Converter -->
+        <div class="feature-category">
+            <h3><i class="fas fa-globe"></i> Currency Converter</h3>
+            <div class="feature-tags">
+                <span class="tag currency">160+ Currencies</span>
+                <span class="tag currency">Live Exchange Rates</span>
+            </div>
+        </div>
+
+        <!-- Smart Features -->
+        <div class="feature-category">
+            <h3><i class="fas fa-microphone-alt"></i> Smart Features</h3>
+            <div class="feature-tags">
+                <span class="tag smart">🔊 TTS - Reads Your Calculations</span>
+                <span class="tag smart">🌙 Light Mode / Dark Mode</span>
+                <span class="tag smart">📜 Calculation History</span>
+                <span class="tag smart">📝 Built-in Notepad</span>
+            </div>
+        </div>
+    </div>
+      <!-- Dark Reality Story -->
+    <div class="glass-card dark-story">
+        <h3><i class="fas fa-skull" style="color: #ff6666;"></i> The Dark Reality: How Google Killed OriginCalc Before It Was Born</h3>
+        
+        <p style="margin-top: 20px; font-size: 18px; font-weight: bold;">OriginCalc never even got submitted.</p>
+        
+        <p>OriginCalc was built. 26,000 lines of code. 3 weeks of work. One person. One laptop. No team. No help.</p>
+        
+        <p>Origin went to Google Play Console to pay the $25 registration fee. Simple. Pay the money. Submit OriginCalc. Let the world see it.</p>
+        
+        <p style="color: #ff8888; font-weight: bold;">Google rejected the $25 payment.</p>
+        
+        <p>Not OriginCalc. The app never even reached them. Google rejected the <strong>money</strong>. No reason. No explanation. Just "transaction declined." Origin tried 50 times. 5. Different cards. Different banks. Different payment methods. All rejected.</p>
+        
+        <p>And here's the worst part: <strong>there is no one to contact.</strong> Google Play Console has no support email. No phone number. No chat. No human. Just automated error messages and a "help center" that sends you in circles until you give up.</p>
+        
+        <p>Origin searched for days. Hours on Reddit. Hours on forums. Found thousands of others with the exact same problem. People from India, from Brazil, from Nigeria, from Indonesia. All of them blocked. All of them ignored. All of them asking the same question:</p>
+        
+        <p style="font-style: italic; text-align: center; font-size: 20px; margin: 20px 0;">"Why won't Google take my $25?"</p>
+        
+        <p>No answer ever came.</p>
+        
+        <p>So here's the truth. Google doesn't want independent creators anymore. They want companies. They want teams. They want people who can afford to lose $25 on a glitch and try again next month. They don't want Origin — a solo creator with a dream and 26,000 lines of code.</p>
+        
+        <p style="margin-top: 20px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px;">OriginCalc is the best calculator on Android. That's not arrogance. That's fact. And you'll never find it on the Play Store. Not because it's bad. Because Google's payment system rejected Origin 50 times and there is no human to fix it.</p>
+        
+        <p style="margin-top: 20px;"><strong>So here it is.</strong> Hosted on its own website. Distributed as a direct APK. No store. No middleman. Because the biggest tech company in the world couldn't be bothered to take $25 or answer an email.</p>
+        
+        <p style="margin-top: 20px; font-size: 14px; color: rgba(255,255,255,0.6);">This is the dark reality. And Origin Empire is not silent about it.</p>
+        
+        <p style="margin-top: 25px;"><strong style="color: #ff8888;">Origin Empire stands against that.</strong> No middlemen. No gatekeepers. Just OriginCalc and an APK file.</p>
+        
+        <p style="margin-top: 15px; font-size: 14px; color: rgba(255,255,255,0.5);">© 2026 Origin Empire • All Rights Reserved • Proprietary Software</p>
+    </div>
+    <!-- Reviews Section -->
+    <div class="glass-card">
+        <h3><i class="fas fa-star"></i> User Reviews</h3>
+        
+        <div class="review-box">
+            <input type="text" id="reviewName" placeholder="Your Name">
+            <textarea id="reviewText" rows="3" placeholder="Write your review..."></textarea>
+            <button class="submit-btn" onclick="submitReview()">
+                <i class="fas fa-paper-plane"></i> Submit Review
+            </button>
+        </div>
+
+        <div id="reviewsList">
+            <p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>Origin Empire — Building software that big tech doesn't want you to have</p>
+        <p style="margin-top: 10px;">Contact: originofficialapp@gmail.com</p>
+    </footer>
+</div>
+
+<script>
+    function loadReviews() {
+        let reviews = localStorage.getItem('origincalc_reviews');
+        if (!reviews) {
+            reviews = [];
+        } else {
+            reviews = JSON.parse(reviews);
+        }
+        
+        const container = document.getElementById('reviewsList');
+        if (reviews.length === 0) {
+            container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>';
+            return;
+        }
+        
+        container.innerHTML = reviews.map(r => `
+            <div class="review-item">
+                <div style="font-weight: bold; color: #88ccff;">${escapeHtml(r.name)}</div>
+                <div style="margin: 8px 0;">${escapeHtml(r.text)}</div>
+                <small style="color: rgba(255,255,255,0.4);">${r.date}</small>
+            </div>
+        `).join('');
+    }
+    
+    function submitReview() {
+        const name = document.getElementById('reviewName').value.trim();
+        const text = document.getElementById('reviewText').value.trim();
+        
+        if (!name || !text) {
+            alert('Please enter your name and review');
+            return;
+        }
+        
+        let reviews = localStorage.getItem('origincalc_reviews');
+        reviews = reviews ? JSON.parse(reviews) : [];
+        
+        reviews.unshift({
+            name: name,
+            text: text,
+            date: new Date().toLocaleDateString()
+        });
+        
+        localStorage.setItem('origincalc_reviews', JSON.stringify(reviews));
+        
+        document.getElementById('reviewName').value = '';
+        document.getElementById('reviewText').value = '';
+        
+        loadReviews();
+    }
+    
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    loadReviews();
+        function shareApp() {
+        const url = window.location.href;
+        
+        if (navigator.share) {
+            // Mobile - share just the link
+            navigator.share({
+                url: url
+            }).catch(err => {
+                if (err.name !== 'AbortError') {
+                    // Fallback for mobile if share fails
+                    copyToClipboard(url);
+                }
+            });
+        } else {
+            // Desktop - copy to clipboard silently
+            copyToClipboard(url);
+        }
+    }
+    
+    function copyToClipboard(url) {
+        navigator.clipboard.writeText(url).then(() => {
+            // Optional: Show a small tooltip instead of alert
+            showToast('Link copied!');
+        }).catch(() => {
+            alert('Copy this link: ' + url);
+        });
+    }
+    
+    function showToast(message) {
+        // Create temporary toast notification
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.style.position = 'fixed';
+        toast.style.bottom = '30px';
+        toast.style.left = '50%';
+        toast.style.transform = 'translateX(-50%)';
+        toast.style.background = 'rgba(0,0,0,0.8)';
+        toast.style.color = 'white';
+        toast.style.padding = '10px 20px';
+        toast.style.borderRadius = '40px';
+        toast.style.fontSize = '14px';
+        toast.style.zIndex = '9999';
+        toast.style.backdropFilter = 'blur(10px)';
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
