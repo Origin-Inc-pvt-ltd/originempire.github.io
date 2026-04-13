@@ -676,7 +676,7 @@
     <div class="glass-card stats-section">
         <div class="stats-container">
             <div class="stat-item">
-                <div class="stat-number" id="downloadCount">0</div>
+                <div class="stat-number" id="downloadCount">70</div>
                 <div class="stat-label"><i class="fas fa-download"></i> Downloads</div>
             </div>
             <div class="stat-item">
@@ -698,6 +698,8 @@
     // IMPORTANT: Replace this URL with your Google Apps Script Web App URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDV7c-6Ssmfdbl8NxD-nZRhaTGVeE_TrB4nyhNFi48yZ4b09Q6i7Ctrb4TiQJAt0Xjmw/exec';
     
+        // Manual download counter (change this number when needed)
+    let manualDownloadCount = 70;
     // Load reviews from Google Sheet
     async function loadReviews() {
         const container = document.getElementById('reviewsList');
@@ -861,8 +863,13 @@ document.addEventListener('DOMContentLoaded', function() {
 // And change it to:
     document.addEventListener('DOMContentLoaded', function() {
         loadReviews();
-        loadDownloadCount();
-        setupDownloadTracking();
+    // Load manual download count
+    function loadDownloadCount() {
+        const downloadCountSpan = document.getElementById('downloadCount');
+        if (downloadCountSpan) {
+            downloadCountSpan.textContent = manualDownloadCount.toLocaleString();
+        }
+    }        setupDownloadTracking();
         fetchRealDownloadCount();
     });
 </script>
