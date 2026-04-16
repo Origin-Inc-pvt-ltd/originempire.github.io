@@ -733,8 +733,6 @@
       // ========== GOOGLE SHEETS REVIEWS (GLOBAL) ==========
     // IMPORTANT: Replace this URL with your Google Apps Script Web App URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDV7c-6Ssmfdbl8NxD-nZRhaTGVeE_TrB4nyhNFi48yZ4b09Q6i7Ctrb4TiQJAt0Xjmw/exec';
-    
-       <script>
     // ========== MANUAL DOWNLOAD COUNTER ==========
     let manualDownloadCount = 300;
     
@@ -744,30 +742,23 @@
             downloadCountSpan.textContent = manualDownloadCount.toLocaleString();
         }
     }
-    
+
     // ========== GOOGLE SHEETS REVIEWS ==========
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDV7c-6Ssmfdbl8NxD-nZRhaTGVeE_TrB4nyhNFi48yZ4b09Q6i7Ctrb4TiQJAt0Xjmw/exec';
-    
+
     async function loadReviews() {
         const container = document.getElementById('reviewsList');
         if (!container) return;
-        
         container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">Loading reviews...</p>';
-        
         try {
             const response = await fetch(SCRIPT_URL);
             const reviews = await response.json();
-            
             const reviewCountSpan = document.getElementById('reviewCount');
-            if (reviewCountSpan) {
-                reviewCountSpan.textContent = reviews.length;
-            }
-            
+            if (reviewCountSpan) reviewCountSpan.textContent = reviews.length;
             if (reviews.length === 0) {
                 container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>';
                 return;
             }
-            
             container.innerHTML = reviews.reverse().map(r => `
                 <div class="review-item">
                     <div style="font-weight: bold; color: #88ccff;">${escapeHtml(r.name)}</div>
@@ -776,77 +767,53 @@
                 </div>
             `).join('');
         } catch (error) {
-            console.error('Failed to load reviews:', error);
-            container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">Failed to load reviews. Please try again later.</p>';
+            container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">Failed to load reviews.</p>';
         }
     }
-    
+
     async function submitReview() {
         const name = document.getElementById('reviewName').value.trim();
         const text = document.getElementById('reviewText').value.trim();
-        
         if (!name || !text) {
             alert('Please enter your name and review');
             return;
         }
-        
         const submitBtn = document.querySelector('.submit-btn');
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
         submitBtn.textContent = 'Submitting...';
-        
         try {
             await fetch(SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: name, review: text })
             });
-            
             document.getElementById('reviewName').value = '';
             document.getElementById('reviewText').value = '';
-            
-            setTimeout(() => {
-                loadReviews();
-            }, 1000);
-            
+            setTimeout(() => loadReviews(), 1000);
             alert('Thank you for your review!');
         } catch (error) {
-            console.error('Failed to submit review:', error);
-            alert('Failed to submit review. Please try again.');
+            alert('Failed to submit review.');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     }
-    
-    // ========== SHARE FUNCTION ==========
+
     function shareApp() {
         const url = window.location.href;
-        
         if (navigator.share) {
-            navigator.share({
-                url: url
-            }).catch(err => {
-                if (err.name !== 'AbortError') {
-                    copyToClipboard(url);
-                }
-            });
+            navigator.share({ url: url }).catch(() => copyToClipboard(url));
         } else {
             copyToClipboard(url);
         }
     }
-    
+
     function copyToClipboard(url) {
-        navigator.clipboard.writeText(url).then(() => {
-            showToast('Link copied!');
-        }).catch(() => {
-            alert('Copy this link: ' + url);
-        });
+        navigator.clipboard.writeText(url).then(() => showToast('Link copied!')).catch(() => alert('Copy this link: ' + url));
     }
-    
+
     function showToast(message) {
         const toast = document.createElement('div');
         toast.textContent = message;
@@ -862,19 +829,15 @@
         toast.style.zIndex = '9999';
         toast.style.backdropFilter = 'blur(10px)';
         document.body.appendChild(toast);
-        
-        setTimeout(() => {
-            toast.remove();
-        }, 2000);
+        setTimeout(() => toast.remove(), 2000);
     }
-    
+
     function escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
-    
-    // ========== INITIALIZE EVERYTHING ==========
+
     document.addEventListener('DOMContentLoaded', function() {
         loadReviews();
         loadDownloadCount();
