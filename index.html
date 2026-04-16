@@ -712,7 +712,7 @@
     <div class="glass-card stats-section">
         <div class="stats-container">
             <div class="stat-item">
-                <div class="stat-number" id="downloadCount">70</div>
+                <div class="stat-number" id="downloadCount">0</div>
                 <div class="stat-label"><i class="fas fa-download"></i> Downloads</div>
             </div>
             <div class="stat-item">
@@ -734,9 +734,20 @@
     // IMPORTANT: Replace this URL with your Google Apps Script Web App URL
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDV7c-6Ssmfdbl8NxD-nZRhaTGVeE_TrB4nyhNFi48yZ4b09Q6i7Ctrb4TiQJAt0Xjmw/exec';
     
-        // Manual download counter (change this number when needed)
+       <script>
+    // ========== MANUAL DOWNLOAD COUNTER ==========
     let manualDownloadCount = 300;
-    // Load reviews from Google Sheet
+    
+    function loadDownloadCount() {
+        const downloadCountSpan = document.getElementById('downloadCount');
+        if (downloadCountSpan) {
+            downloadCountSpan.textContent = manualDownloadCount.toLocaleString();
+        }
+    }
+    
+    // ========== GOOGLE SHEETS REVIEWS ==========
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDV7c-6Ssmfdbl8NxD-nZRhaTGVeE_TrB4nyhNFi48yZ4b09Q6i7Ctrb4TiQJAt0Xjmw/exec';
+    
     async function loadReviews() {
         const container = document.getElementById('reviewsList');
         if (!container) return;
@@ -770,7 +781,6 @@
         }
     }
     
-    // Submit review to Google Sheet
     async function submitReview() {
         const name = document.getElementById('reviewName').value.trim();
         const text = document.getElementById('reviewText').value.trim();
@@ -811,28 +821,26 @@
             submitBtn.textContent = originalText;
         }
     }
-        function shareApp() {
+    
+    // ========== SHARE FUNCTION ==========
+    function shareApp() {
         const url = window.location.href;
         
         if (navigator.share) {
-            // Mobile - share just the link
             navigator.share({
                 url: url
             }).catch(err => {
                 if (err.name !== 'AbortError') {
-                    // Fallback for mobile if share fails
                     copyToClipboard(url);
                 }
             });
         } else {
-            // Desktop - copy to clipboard silently
             copyToClipboard(url);
         }
     }
     
     function copyToClipboard(url) {
         navigator.clipboard.writeText(url).then(() => {
-            // Optional: Show a small tooltip instead of alert
             showToast('Link copied!');
         }).catch(() => {
             alert('Copy this link: ' + url);
@@ -840,7 +848,6 @@
     }
     
     function showToast(message) {
-        // Create temporary toast notification
         const toast = document.createElement('div');
         toast.textContent = message;
         toast.style.position = 'fixed';
@@ -860,53 +867,17 @@
             toast.remove();
         }, 2000);
     }
-    // Fetch and display REAL download count from GitHub Release
-async function fetchRealDownloadCount() {
-    const apiUrl = 'https://api.github.com/repos/Origin-Inc-pvt-ltd/originempire.github.io/releases/tags/v1.0';
     
-    try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        
-        // Find the APK asset and get its download count
-        const apkAsset = data.assets.find(asset => asset.name === 'OriginCalc.apk');
-        
-        if (apkAsset) {
-            const realCount = apkAsset.download_count;
-            // Update the display on your page
-            const downloadSpan = document.getElementById('downloadCount');
-            if (downloadSpan) {
-                downloadSpan.textContent = realCount.toLocaleString();
-            }
-        } else {
-            console.log('APK asset not found in release');
-        }
-    } catch (error) {
-        console.error('Failed to fetch download count:', error);
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
-}
-
-// Call this function when page loads, alongside your existing code
-// Add this line inside your DOMContentLoaded event listener
-// For example, find this part in your code:
-/*
-document.addEventListener('DOMContentLoaded', function() {
-    loadReviews();
-    loadDownloadCount();
-    setupDownloadTracking();
-});
-*/
-// And change it to:
+    
+    // ========== INITIALIZE EVERYTHING ==========
     document.addEventListener('DOMContentLoaded', function() {
         loadReviews();
-    // Load manual download count
-    function loadDownloadCount() {
-        const downloadCountSpan = document.getElementById('downloadCount');
-        if (downloadCountSpan) {
-            downloadCountSpan.textContent = manualDownloadCount.toLocaleString();
-        }
-    }        setupDownloadTracking();
-        fetchRealDownloadCount();
+        loadDownloadCount();
     });
 </script>
 
