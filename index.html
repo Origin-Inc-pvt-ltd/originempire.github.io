@@ -748,72 +748,63 @@
 </div>
 
 <script>
-       // Load reviews and update counter
-      // ========== GOOGLE SHEETS REVIEWS (GLOBAL) ==========
-    // IMPORTANT: Replace this URL with your Google Apps Script Web App URL
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDV7c-6Ssmfdbl8NxD-nZRhaTGVeE_TrB4nyhNFi48yZ4b09Q6i7Ctrb4TiQJAt0Xjmw/exec';
-    // ========== MANUAL DOWNLOAD COUNTER ==========
-    let manualDownloadCount = 300;
+          // ========== EMAIL REVIEWS (Simple) ==========
+    // Reviews are sent to originofficialapp@gmail.com
     
-    function loadDownloadCount() {
-        const downloadCountSpan = document.getElementById('downloadCount');
-        if (downloadCountSpan) {
-            downloadCountSpan.textContent = manualDownloadCount.toLocaleString();
-        }
-    }
-
-    // ========== GOOGLE SHEETS REVIEWS ==========
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwDV7c-6Ssmfdbl8NxD-nZRhaTGVeE_TrB4nyhNFi48yZ4b09Q6i7Ctrb4TiQJAt0Xjmw/exec';
-
-    async function loadReviews() {
+    function loadReviews() {
+        // Reviews are emailed, not stored publicly
         const container = document.getElementById('reviewsList');
         if (!container) return;
-        container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">Loading reviews...</p>';
-        try {
-            const response = await fetch(SCRIPT_URL);
-            const reviews = await response.json();
-            const reviewCountSpan = document.getElementById('reviewCount');
-            if (reviewCountSpan) reviewCountSpan.textContent = reviews.length;
-            if (reviews.length === 0) {
-                container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>';
-                return;
-            }
-            container.innerHTML = reviews.reverse().map(r => `
-                <div class="review-item">
-                    <div style="font-weight: bold; color: #88ccff;">${escapeHtml(r.name)}</div>
-                    <div style="margin: 8px 0;">${escapeHtml(r.review)}</div>
-                    <small style="color: rgba(255,255,255,0.4);">${new Date(r.date).toLocaleDateString()}</small>
-                </div>
-            `).join('');
-        } catch (error) {
-            container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">Failed to load reviews.</p>';
-        }
+        
+        container.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-envelope" style="font-size: 40px; color: #44aaff; margin-bottom: 15px;"></i>
+                <p>Reviews are sent directly to the developer.</p>
+                <p style="font-size: 12px; color: rgba(255,255,255,0.4);">Your feedback will be read personally. Thank you!</p>
+            </div>
+        `;
     }
-
+    
     async function submitReview() {
         const name = document.getElementById('reviewName').value.trim();
         const text = document.getElementById('reviewText').value.trim();
+        
         if (!name || !text) {
             alert('Please enter your name and review');
             return;
         }
+        
         const submitBtn = document.querySelector('.submit-btn');
         const originalText = submitBtn.textContent;
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
+        submitBtn.textContent = 'Sending...';
+        
         try {
-            await fetch(SCRIPT_URL, {
+            // Using Formspree as a free email backend
+            // No account needed. This is a free service.
+            const response = await fetch('https://formspree.io/f/mwpkoqjy', {
                 method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name, review: text })
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: name,
+                    review: text,
+                    _replyto: 'originofficialapp@gmail.com',
+                    _subject: `New OriginCalc Review from ${name}`
+                })
             });
-            document.getElementById('reviewName').value = '';
-            document.getElementById('reviewText').value = '';
-            setTimeout(() => loadReviews(), 1000);
-            alert('Thank you for your review!');
+            
+            if (response.ok) {
+                document.getElementById('reviewName').value = '';
+                document.getElementById('reviewText').value = '';
+                alert('Thank you for your review! It has been sent to the developer.');
+            } else {
+                alert('Failed to send. Please try again or email directly: originofficialapp@gmail.com');
+            }
         } catch (error) {
-            alert('Failed to submit review.');
+            console.error('Failed to send review:', error);
+            alert('Failed to send. Please email directly: originofficialapp@gmail.com');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
