@@ -714,14 +714,13 @@
           <!-- Reviews Section - Email (Simple) -->
     <div class="glass-card">
         <h3><i class="fas fa-star"></i> User Reviews</h3>
-          <div class="review-box">
-            <input type="text" id="reviewName" placeholder="Your Name">
-            <input type="email" id="reviewEmail" placeholder="Your Email (optional)">
-            <textarea id="reviewText" rows="3" placeholder="Write your review..."></textarea>
-            <button class="submit-btn" onclick="submitReview()">
-                <i class="fas fa-paper-plane"></i> Submit Review
-            </button>
-        </div>
+         <div class="review-box">
+    <p style="text-align: center; margin-bottom: 15px;">Send your feedback directly:</p>
+    <a href="mailto:originofficialapp@gmail.com?subject=OriginCalc%20Review&body=Name:%20%0A%0AReview:%20" class="submit-btn" style="display: inline-block; text-decoration: none; text-align: center;">
+        <i class="fas fa-envelope"></i> Send Review via Email
+    </a>
+    <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 15px;">Or email: originofficialapp@gmail.com</p>
+</div>
         <div id="reviewsList">
             <p style="color: rgba(255,255,255,0.5); text-align: center;">No reviews yet. Be the first!</p>
         </div>
@@ -750,29 +749,25 @@
           // ========== EMAIL REVIEWS (Simple) ==========
     // Reviews are sent to originofficialapp@gmail.com
     
-    function loadReviews() {
-        // Reviews are emailed, not stored publicly
-        const container = document.getElementById('reviewsList');
-        if (!container) return;
-        
-        container.innerHTML = `
-            <div style="text-align: center; padding: 20px;">
-                <i class="fas fa-envelope" style="font-size: 40px; color: #44aaff; margin-bottom: 15px;"></i>
-                <p>Reviews are sent directly to the developer.</p>
-                <p style="font-size: 12px; color: rgba(255,255,255,0.4);">Your feedback will be read personally. Thank you!</p>
-            </div>
-        `;
-    }
+function loadReviews() {
+    const container = document.getElementById('reviewsList');
+    const reviewCountSpan = document.getElementById('reviewCount');
+    if (!container) return;
     
- async function submitReview() {
-    const name = document.getElementById('reviewName').value.trim();
-    const email = document.getElementById('reviewEmail').value.trim();
-    const text = document.getElementById('reviewText').value.trim();
+    // Since reviews are emailed, not stored, show a friendly message
+    container.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+            <i class="fas fa-envelope" style="font-size: 40px; color: #44aaff; margin-bottom: 15px;"></i>
+            <p>Reviews are sent directly to the developer.</p>
+            <p style="font-size: 12px; color: rgba(255,255,255,0.4);">Your feedback will be read personally. Thank you!</p>
+        </div>
+    `;
     
-    if (!name || !text) {
-        alert('Please enter your name and review');
-        return;
+    // Update review count to show email icon or keep as 0
+    if (reviewCountSpan) {
+        reviewCountSpan.innerHTML = '📧';
     }
+}
     
     const submitBtn = document.querySelector('.submit-btn');
     const originalText = submitBtn.textContent;
@@ -847,11 +842,24 @@
         div.textContent = text;
         return div.innerHTML;
     }
-
+function loadDownloadCount() {
+    const downloadCountSpan = document.getElementById('downloadCount');
+    if (downloadCountSpan) {
+        downloadCountSpan.textContent = '400';
+    }
+}
     document.addEventListener('DOMContentLoaded', function() {
         loadReviews();
         loadDownloadCount();
-    });
+    }
+                              function loadDownloadCount() {
+    const downloadCountSpan = document.getElementById('downloadCount');
+    if (downloadCountSpan) {
+        downloadCountSpan.textContent = '400';
+    }
+}
+                             
+                             );
 </script>
 
 </body>
